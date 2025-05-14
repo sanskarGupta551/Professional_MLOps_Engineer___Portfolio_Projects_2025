@@ -1,4 +1,4 @@
-# Professional ML Engineer: MLOps Portfolio Projects 2025
+# Professional MLOps Engineer: MLOps Portfolio Projects 2025
 
 ## Portfolio Narrative
 
