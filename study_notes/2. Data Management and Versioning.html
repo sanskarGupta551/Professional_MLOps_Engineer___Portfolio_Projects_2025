@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Data Management System</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .data-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .data-stage {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        
+        .data-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .ingestion { border-left-color: #4299e1; }
+        .validation { border-left-color: #38a169; }
+        .versioning { border-left-color: #ed8936; }
+        .lineage { border-left-color: #9f7aea; }
+        
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stage-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .ingestion .stage-icon { background: #4299e1; }
+        .validation .stage-icon { background: #38a169; }
+        .versioning .stage-icon { background: #ed8936; }
+        .lineage .stage-icon { background: #9f7aea; }
+        
+        .stage-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .stage-content {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #38a169;
+            font-weight: bold;
+        }
+        
+        .version-timeline {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .timeline-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .timeline {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        .version-card {
+            min-width: 200px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            border-top: 4px solid;
+        }
+        
+        .version-card:nth-child(1) { border-top-color: #e53e3e; }
+        .version-card:nth-child(2) { border-top-color: #ed8936; }
+        .version-card:nth-child(3) { border-top-color: #38a169; }
+        .version-card:nth-child(4) { border-top-color: #4299e1; }
+        
+        .version-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .version-details {
+            font-size: 0.9em;
+            color: #718096;
+            margin-bottom: 15px;
+        }
+        
+        .version-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .metric-tag {
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            color: #4a5568;
+        }
+        
+        .data-quality-dashboard {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .dashboard-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .quality-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .best-practices {
+            background: #f0fff4;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid #38a169;
+        }
+        
+        .practices-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2f855a;
+            margin-bottom: 20px;
+        }
+        
+        .practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .practice-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .practice-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .practice-description {
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline {
+                flex-direction: column;
+            }
+            
+            .version-card {
+                min-width: auto;
+            }
+            
+            .quality-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ML Data Management & Versioning</h1>
+        
+        <div class="data-flow">
+            <div class="data-stage ingestion">
+                <div class="stage-header">
+                    <div class="stage-icon">📥</div>
+                    <div class="stage-title">Data Ingestion</div>
+                </div>
+                <div class="stage-content">
+                    Automated collection and preprocessing of data from multiple sources with validation checkpoints.
+                </div>
+                <ul class="feature-list">
+                    <li>Multi-source integration</li>
+                    <li>Real-time streaming</li>
+                    <li>Batch processing</li>
+                    <li>Format standardization</li>
+                    <li>Initial quality checks</li>
+                </ul>
+            </div>
+            
+            <div class="data-stage validation">
+                <div class="stage-header">
+                    <div class="stage-icon">✅</div>
+                    <div class="stage-title">Data Validation</div>
+                </div>
+                <div class="stage-content">
+                    Comprehensive quality assessment and statistical validation before data enters the system.
+                </div>
+                <ul class="feature-list">
+                    <li>Schema validation</li>
+                    <li>Statistical profiling</li>
+                    <li>Anomaly detection</li>
+                    <li>Business rule checks</li>
+                    <li>Data drift monitoring</li>
+                </ul>
+            </div>
+            
+            <div class="data-stage versioning">
+                <div class="stage-header">
+                    <div class="stage-icon">🏷️</div>
+                    <div class="stage-title">Data Versioning</div>
+                </div>
+                <div class="stage-content">
+                    Immutable snapshots of datasets with metadata tracking for reproducibility and rollback capabilities.
+                </div>
+                <ul class="feature-list">
+                    <li>Immutable snapshots</li>
+                    <li>Semantic versioning</li>
+                    <li>Delta compression</li>
+                    <li>Metadata tracking</li>
+                    <li>Rollback capabilities</li>
+                </ul>
+            </div>
+            
+            <div class="data-stage lineage">
+                <div class="stage-header">
+                    <div class="stage-icon">🔗</div>
+                    <div class="stage-title">Data Lineage</div>
+                </div>
+                <div class="stage-content">
+                    Complete traceability of data transformations and dependencies throughout the ML pipeline.
+                </div>
+                <ul class="feature-list">
+                    <li>Transformation tracking</li>
+                    <li>Dependency mapping</li>
+                    <li>Impact analysis</li>
+                    <li>Audit trails</li>
+                    <li>Compliance reporting</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="version-timeline">
+            <div class="timeline-header">Dataset Version Timeline</div>
+            <div class="timeline">
+                <div class="version-card">
+                    <div class="version-title">v1.0.0</div>
+                    <div class="version-details">Initial dataset<br>Jan 15, 2025</div>
+                    <div class="version-metrics">
+                        <span class="metric-tag">1M records</span>
+                        <span class="metric-tag">15 features</span>
+                        <span class="metric-tag">Clean</span>
+                    </div>
+                </div>
+                
+                <div class="version-card">
+                    <div class="version-title">v1.1.0</div>
+                    <div class="version-details">Feature addition<br>Feb 3, 2025</div>
+                    <div class="version-metrics">
+                        <span class="metric-tag">1.2M records</span>
+                        <span class="metric-tag">18 features</span>
+                        <span class="metric-tag">Validated</span>
+                    </div>
+                </div>
+                
+                <div class="version-card">
+                    <div class="version-title">v1.2.0</div>
+                    <div class="version-details">Quality improvements<br>Mar 10, 2025</div>
+                    <div class="version-metrics">
+                        <span class="metric-tag">1.5M records</span>
+                        <span class="metric-tag">18 features</span>
+                        <span class="metric-tag">Enhanced</span>
+                    </div>
+                </div>
+                
+                <div class="version-card">
+                    <div class="version-title">v2.0.0</div>
+                    <div class="version-details">Major schema update<br>Apr 22, 2025</div>
+                    <div class="version-metrics">
+                        <span class="metric-tag">2M records</span>
+                        <span class="metric-tag">25 features</span>
+                        <span class="metric-tag">Current</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-quality-dashboard">
+            <div class="dashboard-title">Real-time Data Quality Metrics</div>
+            <div class="quality-metrics">
+                <div class="metric-card">
+                    <div class="metric-value">98.5%</div>
+                    <div class="metric-label">Completeness</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">99.2%</div>
+                    <div class="metric-label">Accuracy</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">97.8%</div>
+                    <div class="metric-label">Consistency</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.02%</div>
+                    <div class="metric-label">Drift Detected</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">99.9%</div>
+                    <div class="metric-label">Availability</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">145ms</div>
+                    <div class="metric-label">Avg Latency</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="best-practices">
+            <div class="practices-title">Data Management Best Practices</div>
+            <div class="practices-grid">
+                <div class="practice-item">
+                    <div class="practice-title">Immutable Storage</div>
+                    <div class="practice-description">Store data as immutable artifacts with versioned references to ensure reproducibility.</div>
+                </div>
+                <div class="practice-item">
+                    <div class="practice-title">Automated Validation</div>
+                    <div class="practice-description">Implement automated data quality checks at ingestion and processing stages.</div>
+                </div>
+                <div class="practice-item">
+                    <div class="practice-title">Metadata Rich</div>
+                    <div class="practice-description">Capture comprehensive metadata including source, transformation, and quality metrics.</div>
+                </div>
+                <div class="practice-item">
+                    <div class="practice-title">Access Control</div>
+                    <div class="practice-description">Implement proper access controls and audit trails for data governance.</div>
+                </div>
+                <div class="practice-item">
+                    <div class="practice-title">Performance Optimization</div>
+                    <div class="practice-description">Use efficient storage formats and indexing for fast data access and processing.</div>
+                </div>
+                <div class="practice-item">
+                    <div class="practice-title">Disaster Recovery</div>
+                    <div class="practice-description">Maintain backups and implement recovery procedures for critical datasets.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

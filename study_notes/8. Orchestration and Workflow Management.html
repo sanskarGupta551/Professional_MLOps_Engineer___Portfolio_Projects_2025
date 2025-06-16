@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Orchestration & Workflow Management</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .workflow-components {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .component {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .component::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            opacity: 0.08;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .component:hover::before {
+            transform: scale(1.2);
+        }
+        
+        .scheduling { border-left-color: #4299e1; }
+        .dependency { border-left-color: #38a169; }
+        .execution { border-left-color: #ed8936; }
+        .monitoring { border-left-color: #9f7aea; }
+        
+        .scheduling::before { background: #4299e1; }
+        .dependency::before { background: #38a169; }
+        .execution::before { background: #ed8936; }
+        .monitoring::before { background: #9f7aea; }
+        
+        .component-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .component-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .scheduling .component-icon { background: #4299e1; }
+        .dependency .component-icon { background: #38a169; }
+        .execution .component-icon { background: #ed8936; }
+        .monitoring .component-icon { background: #9f7aea; }
+        
+        .component-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .component-description {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .component-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .component-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .component-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .component-features li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        .pipeline-visualization {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .pipeline-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .pipeline-dag {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .pipeline-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stage-node {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 120px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .stage-node:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .node-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .node-status {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+        
+        .node-success { border-left: 4px solid #48bb78; }
+        .node-running { border-left: 4px solid #ed8936; }
+        .node-pending { border-left: 4px solid #a0aec0; }
+        .node-failed { border-left: 4px solid #e53e3e; }
+        
+        .stage-connector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .connector-arrow {
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+        
+        .connector-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -3px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 8px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .orchestration-patterns {
+            background: #f0fff4;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #38a169;
+        }
+        
+        .patterns-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2f855a;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .pattern-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid;
+            transition: transform 0.3s ease;
+        }
+        
+        .pattern-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .pattern-card:nth-child(1) { border-top-color: #4299e1; }
+        .pattern-card:nth-child(2) { border-top-color: #38a169; }
+        .pattern-card:nth-child(3) { border-top-color: #ed8936; }
+        .pattern-card:nth-child(4) { border-top-color: #9f7aea; }
+        
+        .pattern-name {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .pattern-description {
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .pattern-benefits {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .pattern-benefits li {
+            padding: 3px 0;
+            font-size: 0.9em;
+            color: #718096;
+        }
+        
+        .pattern-benefits li:before {
+            content: "✓";
+            color: #38a169;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        .workflow-dashboard {
+            background: #fffaf0;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #ed8936;
+        }
+        
+        .dashboard-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #c05621;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ed8936;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .recent-runs {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .runs-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .run-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .run-item:hover {
+            background: #f7fafc;
+        }
+        
+        .run-item:last-child {
+            border-bottom: none;
+        }
+        
+        .run-name {
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .run-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-running {
+            background: #feebc8;
+            color: #744210;
+        }
+        
+        .status-failed {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .run-duration {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .error-handling {
+            background: #fff5f5;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #e53e3e;
+        }
+        
+        .error-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #c53030;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .error-strategies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .strategy-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .strategy-name {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .strategy-description {
+            color: #4a5568;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        
+        .strategy-example {
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #4a5568;
+            font-family: monospace;
+        }
+        
+        .tools-comparison {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .tools-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tool-description {
+            font-size: 0.9em;
+            opacity: 0.9;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .tool-features {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tool-features li {
+            font-size: 0.8em;
+            padding: 2px 0;
+            opacity: 0.8;
+        }
+        
+        .tool-features li:before {
+            content: "•";
+            margin-right: 8px;
+        }
+        
+        .resource-management {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #4299e1;
+        }
+        
+        .resource-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .resource-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .resource-category {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .compute-category .category-icon { background: #4299e1; }
+        .memory-category .category-icon { background: #38a169; }
+        .storage-category .category-icon { background: #ed8936; }
+        
+        .category-name {
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .resource-items {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .resource-items li {
+            padding: 5px 0;
+            color: #4a5568;
+            font-size: 0.9em;
+        }
+        
+        .resource-items li:before {
+            content: "→";
+            color: #4299e1;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .pipeline-stage {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ML Orchestration & Workflow Management</h1>
+        
+        <div class="workflow-components">
+            <div class="component scheduling">
+                <div class="component-header">
+                    <div class="component-icon">⏰</div>
+                    <div class="component-title">Scheduling & Triggers</div>
+                </div>
+                <div class="component-description">
+                    Automated scheduling and event-driven execution of ML workflows based on time, data availability, or external triggers.
+                </div>
+                <ul class="component-features">
+                    <li>Cron-based scheduling for regular pipelines</li>
+                    <li>Event-driven triggers from data changes</li>
+                    <li>Manual execution and parameter override</li>
+                    <li>Conditional execution based on upstream results</li>
+                    <li>Resource-aware scheduling</li>
+                    <li>Priority-based task queuing</li>
+                </ul>
+            </div>
+            
+            <div class="component dependency">
+                <div class="component-header">
+                    <div class="component-icon">🔗</div>
+                    <div class="component-title">Dependency Management</div>
+                </div>
+                <div class="component-description">
+                    Complex dependency resolution ensuring tasks execute in correct order with proper data and resource availability.
+                </div>
+                <ul class="component-features">
+                    <li>Directed Acyclic Graph (DAG) representation</li>
+                    <li>Dynamic dependency resolution</li>
+                    <li>Cross-pipeline dependencies</li>
+                    <li>Data dependency tracking</li>
+                    <li>Resource dependency management</li>
+                    <li>Conditional dependency logic</li>
+                </ul>
+            </div>
+            
+            <div class="component execution">
+                <div class="component-header">
+                    <div class="component-icon">⚡</div>
+                    <div class="component-title">Execution Engine</div>
+                </div>
+                <div class="component-description">
+                    Distributed execution of workflow tasks across heterogeneous compute resources with scaling and optimization.
+                </div>
+                <ul class="component-features">
+                    <li>Distributed task execution</li>
+                    <li>Dynamic resource allocation</li>
+                    <li>Container-based task isolation</li>
+                    <li>GPU and specialized hardware support</li>
+                    <li>Parallel and concurrent execution</li>
+                    <li>Task result caching</li>
+                </ul>
+            </div>
+            
+            <div class="component monitoring">
+                <div class="component-header">
+                    <div class="component-icon">📊</div>
+                    <div class="component-title">Monitoring & Observability</div>
+                </div>
+                <div class="component-description">
+                    Real-time monitoring of workflow execution with alerting, logging, and performance analytics.
+                </div>
+                <ul class="component-features">
+                    <li>Real-time execution monitoring</li>
+                    <li>Performance metrics and analytics</li>
+                    <li>Error tracking and alerting</li>
+                    <li>Resource utilization monitoring</li>
+                    <li>Audit trails and compliance</li>
+                    <li>Custom dashboard creation</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="pipeline-visualization">
+            <div class="pipeline-title">ML Pipeline Execution Flow</div>
+            <div class="pipeline-dag">
+                <div class="pipeline-stage">
+                    <div class="stage-node node-success">
+                        <div class="node-title">Data Ingestion</div>
+                        <div class="node-status">Completed</div>
+                    </div>
+                </div>
+                
+                <div class="stage-connector">
+                    <div class="connector-arrow"></div>
+                </div>
+                
+                <div class="pipeline-stage">
+                    <div class="stage-node node-success">
+                        <div class="node-title">Data Validation</div>
+                        <div class="node-status">Completed</div>
+                    </div>
+                    <div class="stage-node node-success">
+                        <div class="node-title">Feature Engineering</div>
+                        <div class="node-status">Completed</div>
+                    </div>
+                </div>
+                
+                <div class="stage-connector">
+                    <div class="connector-arrow"></div>
+                </div>
+                
+                <div class="pipeline-stage">
+                    <div class="stage-node node-running">
+                        <div class="node-title">Model Training</div>
+                        <div class="node-status">Running (45%)</div>
+                    </div>
+                </div>
+                
+                <div class="stage-connector">
+                    <div class="connector-arrow"></div>
+                </div>
+                
+                <div class="pipeline-stage">
+                    <div class="stage-node node-pending">
+                        <div class="node-title">Model Validation</div>
+                        <div class="node-status">Pending</div>
+                    </div>
+                    <div class="stage-node node-pending">
+                        <div class="node-title">Model Registration</div>
+                        <div class="node-status">Pending</div>
+                    </div>
+                </div>
+                
+                <div class="stage-connector">
+                    <div class="connector-arrow"></div>
+                </div>
+                
+                <div class="pipeline-stage">
+                    <div class="stage-node node-pending">
+                        <div class="node-title">Model Deployment</div>
+                        <div class="node-status">Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="orchestration-patterns">
+            <div class="patterns-title">Orchestration Patterns</div>
+            <div class="patterns-grid">
+                <div class="pattern-card">
+                    <div class="pattern-name">Sequential Pipeline</div>
+                    <div class="pattern-description">Linear execution of tasks where each step depends on the previous one's completion.</div>
+                    <ul class="pattern-benefits">
+                        <li>Simple dependency management</li>
+                        <li>Easy debugging and monitoring</li>
+                        <li>Predictable execution flow</li>
+                        <li>Lower resource complexity</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-card">
+                    <div class="pattern-name">Parallel Branches</div>
+                    <div class="pattern-description">Independent tasks executing simultaneously to maximize resource utilization and reduce total runtime.</div>
+                    <ul class="pattern-benefits">
+                        <li>Faster overall execution</li>
+                        <li>Better resource utilization</li>
+                        <li>Independent failure isolation</li>
+                        <li>Scalable parallelism</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-card">
+                    <div class="pattern-name">Fan-out/Fan-in</div>
+                    <div class="pattern-description">Distribute work across multiple parallel tasks and then aggregate results in downstream steps.</div>
+                    <ul class="pattern-benefits">
+                        <li>Distributed processing</li>
+                        <li>Result aggregation</li>
+                        <li>Scalable workload distribution</li>
+                        <li>Fault tolerance through redundancy</li>
+                    </ul>
+                </div>
+                
+                <div class="pattern-card">
+                    <div class="pattern-name">Conditional Execution</div>
+                    <div class="pattern-description">Dynamic workflow paths based on runtime conditions, data quality, or model performance.</div>
+                    <ul class="pattern-benefits">
+                        <li>Adaptive workflow behavior</li>
+                        <li>Resource optimization</li>
+                        <li>Quality-based branching</li>
+                        <li>Intelligent decision making</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="workflow-dashboard">
+            <div class="dashboard-title">Workflow Execution Dashboard</div>
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Active Workflows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,247</div>
+                    <div class="stat-label">Tasks/Day</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">94.7%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">23min</div>
+                    <div class="stat-label">Avg Duration</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Failed Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.3TB</div>
+                    <div class="stat-label">Data Processed</div>
+                </div>
+            </div>
+            
+            <div class="recent-runs">
+                <div class="runs-title">Recent Pipeline Runs</div>
+                <div class="run-item">
+                    <div>
+                        <div class="run-name">Customer Churn Training</div>
+                        <div class="run-duration">Started 15 mins ago</div>
+                    </div>
+                    <div class="run-status status-running">Running</div>
+                </div>
+                <div class="run-item">
+                    <div>
+                        <div class="run-name">Fraud Detection Inference</div>
+                        <div class="run-duration">Completed in 3m 42s</div>
+                    </div>
+                    <div class="run-status status-success">Success</div>
+                </div>
+                <div class="run-item">
+                    <div>
+                        <div class="run-name">Data Quality Validation</div>
+                        <div class="run-duration">Failed after 8m 15s</div>
+                    </div>
+                    <div class="run-status status-failed">Failed</div>
+                </div>
+                <div class="run-item">
+                    <div>
+                        <div class="run-name">Recommendation Training</div>
+                        <div class="run-duration">Completed in 45m 23s</div>
+                    </div>
+                    <div class="run-status status-success">Success</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="error-handling">
+            <div class="error-title">Error Handling & Recovery Strategies</div>
+            <div class="error-strategies">
+                <div class="strategy-card">
+                    <div class="strategy-name">Retry Logic</div>
+                    <div class="strategy-description">Automatic retry with exponential backoff for transient failures and network issues.</div>
+                    <div class="strategy-example">
+                        retry(max_attempts=3, backoff=exponential, exceptions=[NetworkError, TimeoutError])
+                    </div>
+                </div>
+                
+                <div class="strategy-card">
+                    <div class="strategy-name">Circuit Breaker</div>
+                    <div class="strategy-description">Fail fast when downstream services are unavailable to prevent cascade failures.</div>
+                    <div class="strategy-example">
+                        circuit_breaker(failure_threshold=5, timeout=60s, recovery_timeout=300s)
+                    </div>
+                </div>
+                
+                <div class="strategy-card">
+                    <div class="strategy-name">Compensation</div>
+                    <div class="strategy-description">Rollback or cleanup actions when workflow fails to maintain system consistency.</div>
+                    <div class="strategy-example">
+                        on_failure: [cleanup_temp_files, rollback_model_version, send_alert]
+                    </div>
+                </div>
+                
+                <div class="strategy-card">
+                    <div class="strategy-name">Dead Letter Queue</div>
+                    <div class="strategy-description">Quarantine failed tasks for manual investigation while allowing workflow to continue.</div>
+                    <div class="strategy-example">
+                        dead_letter_queue: failed_tasks_queue, max_retries: 3, alert_on_dlq: true
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tools-comparison">
+            <div class="tools-title">Orchestration Tools Landscape</div>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-name">Apache Airflow</div>
+                    <div class="tool-description">Python-based platform for authoring, scheduling, and monitoring workflows with rich UI and extensive integrations.</div>
+                    <ul class="tool-features">
+                        <li>Rich Python ecosystem</li>
+                        <li>Extensive operator library</li>
+                        <li>Web-based UI</li>
+                        <li>Strong community</li>
+                        <li>Complex dependency management</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Kubeflow Pipelines</div>
+                    <div class="tool-description">Kubernetes-native ML workflows with containerized steps and integration with ML tools.</div>
+                    <ul class="tool-features">
+                        <li>Kubernetes native</li>
+                        <li>ML-focused components</li>
+                        <li>Container-based execution</li>
+                        <li>Experiment tracking</li>
+                        <li>Resource management</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Prefect</div>
+                    <div class="tool-description">Modern workflow management system with dynamic task generation and hybrid execution models.</div>
+                    <ul class="tool-features">
+                        <li>Dynamic workflows</li>
+                        <li>Hybrid cloud execution</li>
+                        <li>Modern Python API</li>
+                        <li>Built-in retries</li>
+                        <li>Flow versioning</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Argo Workflows</div>
+                    <div class="tool-description">Kubernetes-native workflow engine for orchestrating parallel jobs with YAML-based workflow definition.</div>
+                    <ul class="tool-features">
+                        <li>Container native</li>
+                        <li>DAG and step-based</li>
+                        <li>Artifact management</li>
+                        <li>UI and CLI tools</li>
+                        <li>Event triggers</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Dagster</div>
+                    <div class="tool-description">Data orchestrator for ML and analytics with strong typing and data quality focus.</div>
+                    <ul class="tool-features">
+                        <li>Type system</li>
+                        <li>Data quality testing</li>
+                        <li>Asset-based thinking</li>
+                        <li>Development tools</li>
+                        <li>Observability</li>
+                    </ul>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-name">Apache Beam</div>
+                    <div class="tool-description">Unified programming model for batch and streaming data processing with multiple runner support.</div>
+                    <ul class="tool-features">
+                        <li>Batch and streaming</li>
+                        <li>Multiple runners</li>
+                        <li>Windowing support</li>
+                        <li>SQL interface</li>
+                        <li>Cross-language support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resource-management">
+            <div class="resource-title">Resource Management & Optimization</div>
+            <div class="resource-categories">
+                <div class="resource-category compute-category">
+                    <div class="category-header">
+                        <div class="category-icon">🖥️</div>
+                        <div class="category-name">Compute Resources</div>
+                    </div>
+                    <ul class="resource-items">
+                        <li>Dynamic CPU/GPU allocation</li>
+                        <li>Resource pools and quotas</li>
+                        <li>Auto-scaling based on demand</li>
+                        <li>Spot instance utilization</li>
+                        <li>Resource contention handling</li>
+                        <li>Cost optimization strategies</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-category memory-category">
+                    <div class="category-header">
+                        <div class="category-icon">🧠</div>
+                        <div class="category-name">Memory Management</div>
+                    </div>
+                    <ul class="resource-items">
+                        <li>Memory allocation per task</li>
+                        <li>Garbage collection optimization</li>
+                        <li>Memory leak detection</li>
+                        <li>Shared memory utilization</li>
+                        <li>Memory pressure monitoring</li>
+                        <li>Out-of-memory recovery</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-category storage-category">
+                    <div class="category-header">
+                        <div class="category-icon">💾</div>
+                        <div class="category-name">Storage & I/O</div>
+                    </div>
+                    <ul class="resource-items">
+                        <li>Distributed storage access</li>
+                        <li>I/O bandwidth optimization</li>
+                        <li>Caching strategies</li>
+                        <li>Temporary storage cleanup</li>
+                        <li>Storage tier management</li>
+                        <li>Data locality optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
