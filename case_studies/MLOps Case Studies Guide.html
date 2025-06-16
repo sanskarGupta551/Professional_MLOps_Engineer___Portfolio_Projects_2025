@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLOps Case Studies & Examples</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .intro {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .intro h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.5em;
+        }
+        
+        .intro p {
+            margin: 0;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .categories {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .category {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .tech-giants { border-left-color: #e53e3e; }
+        .financial-services { border-left-color: #38a169; }
+        .ecommerce-retail { border-left-color: #ed8936; }
+        .healthcare-life { border-left-color: #4299e1; }
+        .autonomous-mobility { border-left-color: #9f7aea; }
+        .media-entertainment { border-left-color: #d69e2e; }
+        .manufacturing-iot { border-left-color: #38b2ac; }
+        .startup-scale { border-left-color: #f56565; }
+        .open-source { border-left-color: #48bb78; }
+        .failure-lessons { border-left-color: #a0aec0; }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .tech-giants .category-icon { background: #e53e3e; }
+        .financial-services .category-icon { background: #38a169; }
+        .ecommerce-retail .category-icon { background: #ed8936; }
+        .healthcare-life .category-icon { background: #4299e1; }
+        .autonomous-mobility .category-icon { background: #9f7aea; }
+        .media-entertainment .category-icon { background: #d69e2e; }
+        .manufacturing-iot .category-icon { background: #38b2ac; }
+        .startup-scale .category-icon { background: #f56565; }
+        .open-source .category-icon { background: #48bb78; }
+        .failure-lessons .category-icon { background: #a0aec0; }
+        
+        .category-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .category-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .case-studies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .case-study {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .case-study:hover {
+            border-color: #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .case-title {
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 1.1em;
+            flex: 1;
+        }
+        
+        .case-complexity {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .complexity-beginner {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .complexity-intermediate {
+            background: #feebc8;
+            color: #744210;
+        }
+        
+        .complexity-advanced {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .case-description {
+            color: #4a5568;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            font-size: 0.9em;
+        }
+        
+        .study-focus {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .focus-title {
+            font-weight: bold;
+            color: #4c51bf;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .focus-points {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .focus-points li {
+            padding: 2px 0;
+            font-size: 0.85em;
+            color: #4a5568;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .focus-points li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tag {
+            background: #edf2f7;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            color: #4a5568;
+        }
+        
+        .tag.ml-type { background: #e6fffa; color: #234e52; }
+        .tag.scale { background: #fef5e7; color: #744210; }
+        .tag.deployment { background: #f0fff4; color: #22543d; }
+        .tag.industry { background: #e3f2fd; color: #1e3a8a; }
+        
+        .learning-objectives {
+            background: #f0fff4;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #38a169;
+        }
+        
+        .objectives-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2f855a;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .objective-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .objective-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .objective-description {
+            color: #4a5568;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        
+        .objective-skills {
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            color: #718096;
+        }
+        
+        .study-methodology {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .methodology-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .methodology-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .method-step {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 10px auto;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .step-description {
+            font-size: 0.9em;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .resources {
+            background: #fffaf0;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 5px solid #ed8936;
+        }
+        
+        .resources-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #c05621;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .resource-category {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .resource-category-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        
+        .resource-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .resource-item {
+            padding: 5px 0;
+            color: #4a5568;
+            font-size: 0.9em;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+        
+        .resource-item:before {
+            content: "📚";
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .case-studies {
+                grid-template-columns: 1fr;
+            }
+            
+            .objectives-grid,
+            .methodology-steps,
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MLOps Real-World Case Studies & Examples</h1>
+        
+        <div class="intro">
+            <h2>Learn MLOps Through Real-World Implementation Stories</h2>
+            <p>Explore how industry leaders implement MLOps concepts in practice, understand their challenges, solutions, and lessons learned. Each case study is designed to deepen your understanding of specific MLOps concepts through concrete examples.</p>
+        </div>
+        
+        <div class="categories">
+            <div class="category tech-giants">
+                <div class="category-header">
+                    <div class="category-icon">🏢</div>
+                    <div class="category-title">Tech Giants & Platform Companies</div>
+                </div>
+                <div class="category-description">
+                    Large-scale MLOps implementations from technology leaders handling billions of users and massive data volumes.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Netflix Recommendation Engine</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            How Netflix serves 200+ million users with personalized recommendations using A/B testing, feature engineering, and real-time serving.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Large-scale feature engineering and serving</li>
+                                <li>A/B testing infrastructure for ML models</li>
+                                <li>Real-time vs batch recommendation systems</li>
+                                <li>Multi-armed bandit algorithms in production</li>
+                                <li>Data pipeline architecture for streaming data</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Recommender Systems</span>
+                            <span class="tag scale">Billions of Users</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">Entertainment</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Uber's Michelangelo Platform</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Uber's internal ML platform that democratizes machine learning across the organization with end-to-end MLOps workflows.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Building ML platforms for organizational scale</li>
+                                <li>Feature store architecture and implementation</li>
+                                <li>Model lifecycle management at enterprise scale</li>
+                                <li>Multi-tenant ML infrastructure design</li>
+                                <li>Workflow orchestration for diverse ML use cases</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Platform</span>
+                            <span class="tag scale">Enterprise</span>
+                            <span class="tag deployment">Multi-pattern</span>
+                            <span class="tag industry">Transportation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Google's TFX Production Pipeline</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Google's TensorFlow Extended (TFX) framework for production ML pipelines, powering Google's own ML applications.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>End-to-end ML pipeline architecture</li>
+                                <li>Data validation and schema evolution</li>
+                                <li>Model analysis and validation frameworks</li>
+                                <li>Continuous training and deployment</li>
+                                <li>ML metadata management and lineage</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Framework</span>
+                            <span class="tag scale">Global</span>
+                            <span class="tag deployment">Continuous</span>
+                            <span class="tag industry">Technology</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Facebook's (Meta) FBLearner Flow</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Meta's ML platform handling thousands of models and experiments, serving billions of predictions daily across their product ecosystem.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Workflow orchestration at massive scale</li>
+                                <li>Experiment management and tracking</li>
+                                <li>Feature engineering for social media data</li>
+                                <li>Real-time inference for news feed ranking</li>
+                                <li>ML infrastructure cost optimization</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Ranking</span>
+                            <span class="tag scale">Billions</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">Social Media</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category financial-services">
+                <div class="category-header">
+                    <div class="category-icon">💰</div>
+                    <div class="category-title">Financial Services & FinTech</div>
+                </div>
+                <div class="category-description">
+                    High-stakes ML implementations with strict compliance, risk management, and real-time decision making requirements.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">JPMorgan Chase's COIN Platform</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Contract Intelligence (COIN) platform using NLP and ML to analyze legal documents, reducing manual review time from 360,000 hours to seconds.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>NLP model deployment in regulated environments</li>
+                                <li>Model governance and compliance frameworks</li>
+                                <li>Human-in-the-loop ML systems</li>
+                                <li>Document processing pipelines at scale</li>
+                                <li>ROI measurement for ML automation</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">NLP</span>
+                            <span class="tag scale">Enterprise</span>
+                            <span class="tag deployment">Batch</span>
+                            <span class="tag industry">Banking</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">PayPal's Real-time Fraud Detection</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            PayPal's ML-powered fraud detection system processing millions of transactions daily with sub-100ms latency requirements.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Real-time feature engineering for fraud detection</li>
+                                <li>Online learning and model adaptation</li>
+                                <li>High-throughput, low-latency ML serving</li>
+                                <li>Imbalanced dataset handling in production</li>
+                                <li>Model monitoring and drift detection</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Classification</span>
+                            <span class="tag scale">Millions</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">Payments</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Capital One's Credit Risk Modeling</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Capital One's end-to-end ML platform for credit risk assessment, regulatory compliance, and model risk management.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>ML model governance in regulated industries</li>
+                                <li>Bias detection and fairness in lending</li>
+                                <li>Model interpretability and explainability</li>
+                                <li>Regulatory reporting and audit trails</li>
+                                <li>A/B testing for financial products</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Risk Modeling</span>
+                            <span class="tag scale">Enterprise</span>
+                            <span class="tag deployment">Batch+Online</span>
+                            <span class="tag industry">Banking</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category ecommerce-retail">
+                <div class="category-header">
+                    <div class="category-icon">🛒</div>
+                    <div class="category-title">E-commerce & Retail</div>
+                </div>
+                <div class="category-description">
+                    ML systems driving personalization, inventory management, pricing optimization, and customer experience in retail environments.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Amazon's Product Recommendation System</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Amazon's sophisticated recommendation engine driving 35% of revenue through personalized product suggestions and collaborative filtering.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Collaborative filtering at billion-user scale</li>
+                                <li>Real-time personalization infrastructure</li>
+                                <li>Cold start problem solutions</li>
+                                <li>Multi-objective optimization (relevance vs diversity)</li>
+                                <li>Feature engineering for e-commerce data</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Recommender</span>
+                            <span class="tag scale">Global</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">E-commerce</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Stitch Fix's Algorithmic Styling</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            Stitch Fix's ML-driven personal styling service combining human expertise with algorithmic recommendations for fashion curation.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Human-in-the-loop ML systems design</li>
+                                <li>Multi-modal ML (text, images, preferences)</li>
+                                <li>Inventory optimization and demand forecasting</li>
+                                <li>Customer feedback loop integration</li>
+                                <li>ML model interpretability for business users</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Multi-modal</span>
+                            <span class="tag scale">Millions</span>
+                            <span class="tag deployment">Batch+Human</span>
+                            <span class="tag industry">Fashion</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Walmart's Supply Chain Optimization</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Walmart's ML-powered supply chain management system optimizing inventory, logistics, and demand forecasting across thousands of stores.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Time series forecasting at retail scale</li>
+                                <li>Multi-objective optimization for supply chain</li>
+                                <li>Hierarchical forecasting models</li>
+                                <li>External data integration (weather, events)</li>
+                                <li>Batch processing for operational planning</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Forecasting</span>
+                            <span class="tag scale">Enterprise</span>
+                            <span class="tag deployment">Batch</span>
+                            <span class="tag industry">Retail</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category healthcare-life">
+                <div class="category-header">
+                    <div class="category-icon">🏥</div>
+                    <div class="category-title">Healthcare & Life Sciences</div>
+                </div>
+                <div class="category-description">
+                    Mission-critical ML applications in healthcare with strict regulatory requirements, privacy constraints, and life-impacting decisions.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Google's DeepMind Health AI</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            DeepMind's AI systems for medical diagnosis, including diabetic retinopathy detection and acute kidney injury prediction in clinical settings.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Medical AI model validation and clinical trials</li>
+                                <li>Privacy-preserving ML in healthcare</li>
+                                <li>Model interpretability for medical decisions</li>
+                                <li>Integration with electronic health records</li>
+                                <li>Regulatory approval processes for medical AI</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Computer Vision</span>
+                            <span class="tag scale">Clinical</span>
+                            <span class="tag deployment">Clinical Integration</span>
+                            <span class="tag industry">Healthcare</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Pfizer's Drug Discovery Platform</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Pfizer's AI-powered drug discovery pipeline using ML to accelerate compound identification, optimization, and clinical trial design.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Scientific ML workflows and reproducibility</li>
+                                <li>Molecular property prediction models</li>
+                                <li>Federated learning across research sites</li>
+                                <li>Long-term model lifecycle in R&D</li>
+                                <li>Integration with laboratory automation</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Scientific ML</span>
+                            <span class="tag scale">Research</span>
+                            <span class="tag deployment">R&D Pipeline</span>
+                            <span class="tag industry">Pharmaceutical</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Tempus Cancer Analytics Platform</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            Tempus's precision medicine platform using genomic data and ML to personalize cancer treatment and improve patient outcomes.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Genomic data processing pipelines</li>
+                                <li>Privacy-preserving analytics (HIPAA compliance)</li>
+                                <li>Multi-modal data integration</li>
+                                <li>Clinical decision support systems</li>
+                                <li>Real-world evidence generation</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Genomics</span>
+                            <span class="tag scale">Clinical</span>
+                            <span class="tag deployment">Clinical Workflow</span>
+                            <span class="tag industry">Precision Medicine</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category autonomous-mobility">
+                <div class="category-header">
+                    <div class="category-icon">🚗</div>
+                    <div class="category-title">Autonomous Systems & Mobility</div>
+                </div>
+                <div class="category-description">
+                    Safety-critical ML systems for autonomous vehicles, robotics, and intelligent transportation with real-time processing requirements.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Tesla's Autopilot Neural Networks</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Tesla's end-to-end neural network training and deployment pipeline for autonomous driving, processing millions of miles of real-world data.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Edge deployment for safety-critical systems</li>
+                                <li>Continuous learning from fleet data</li>
+                                <li>Computer vision pipeline optimization</li>
+                                <li>Over-the-air model updates</li>
+                                <li>Simulation and testing frameworks</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Computer Vision</span>
+                            <span class="tag scale">Fleet</span>
+                            <span class="tag deployment">Edge</span>
+                            <span class="tag industry">Automotive</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Waymo's Autonomous Driving Platform</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Waymo's comprehensive ML platform for autonomous driving, including perception, prediction, and planning systems with extensive simulation.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Multi-sensor fusion ML systems</li>
+                                <li>Simulation-based ML model training</li>
+                                <li>Safety verification and validation</li>
+                                <li>Distributed training for autonomous systems</li>
+                                <li>Real-time inference on embedded systems</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Multi-modal</span>
+                            <span class="tag scale">Fleet</span>
+                            <span class="tag deployment">Real-time Edge</span>
+                            <span class="tag industry">Autonomous Vehicles</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Boston Dynamics' Robot Learning</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Boston Dynamics' ML approaches for robot control, navigation, and manipulation, combining classical robotics with modern ML techniques.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Reinforcement learning for robot control</li>
+                                <li>Real-time motion planning and control</li>
+                                <li>Sim-to-real transfer learning</li>
+                                <li>Online adaptation and learning</li>
+                                <li>Safety constraints in RL systems</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Reinforcement Learning</span>
+                            <span class="tag scale">Robotics</span>
+                            <span class="tag deployment">Real-time Control</span>
+                            <span class="tag industry">Robotics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category startup-scale">
+                <div class="category-header">
+                    <div class="category-icon">🚀</div>
+                    <div class="category-title">Startup to Scale: Growth Stories</div>
+                </div>
+                <div class="category-description">
+                    MLOps evolution stories from startups scaling to enterprise, showing how ML infrastructure grows with business needs.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Airbnb's ML Platform Evolution</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            Airbnb's journey from manual ML workflows to Bighead, their end-to-end ML platform, scaling from startup to global marketplace.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>ML platform evolution and migration strategies</li>
+                                <li>Scaling ML infrastructure with business growth</li>
+                                <li>Feature store implementation and adoption</li>
+                                <li>Search ranking and pricing optimization</li>
+                                <li>Democratizing ML across product teams</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Platform Evolution</span>
+                            <span class="tag scale">Growth Story</span>
+                            <span class="tag deployment">Multi-pattern</span>
+                            <span class="tag industry">Marketplace</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Spotify's Music Recommendation Journey</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            Spotify's evolution from simple collaborative filtering to sophisticated ML platform powering Discover Weekly and personalized playlists.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Audio feature engineering and NLP for music</li>
+                                <li>Real-time streaming ML infrastructure</li>
+                                <li>Playlist generation and music discovery</li>
+                                <li>A/B testing for recommendation algorithms</li>
+                                <li>Scaling personalization to millions of users</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Audio ML + NLP</span>
+                            <span class="tag scale">Millions</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">Music Streaming</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Instacart's Fulfillment Optimization</div>
+                            <div class="case-complexity complexity-beginner">Beginner</div>
+                        </div>
+                        <div class="case-description">
+                            Instacart's ML systems for optimizing grocery delivery, from demand forecasting to shopper-customer matching and route optimization.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Operations research meets ML</li>
+                                <li>Real-time matching algorithms</li>
+                                <li>Demand forecasting for perishable goods</li>
+                                <li>Multi-sided marketplace optimization</li>
+                                <li>Mobile ML for shopper applications</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Optimization</span>
+                            <span class="tag scale">Regional</span>
+                            <span class="tag deployment">Real-time + Mobile</span>
+                            <span class="tag industry">Grocery Delivery</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category open-source">
+                <div class="category-header">
+                    <div class="category-icon">🌍</div>
+                    <div class="category-title">Open Source Success Stories</div>
+                </div>
+                <div class="category-description">
+                    Community-driven MLOps implementations, open source tools, and collaborative ML projects demonstrating best practices.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Kubeflow: Kubernetes-native MLOps</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            The development and adoption of Kubeflow as an open-source ML platform, demonstrating community-driven MLOps tool development.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Open source MLOps tool architecture</li>
+                                <li>Kubernetes-native ML workflows</li>
+                                <li>Multi-vendor collaboration in ML tools</li>
+                                <li>Container-based ML pipeline design</li>
+                                <li>Community governance for ML platforms</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Platform</span>
+                            <span class="tag scale">Community</span>
+                            <span class="tag deployment">Kubernetes</span>
+                            <span class="tag industry">Open Source</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">MLflow: ML Lifecycle Management</div>
+                            <div class="case-complexity complexity-beginner">Beginner</div>
+                        </div>
+                        <div class="case-description">
+                            MLflow's development by Databricks and adoption across the industry as a standard for ML experiment tracking and model management.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Open source MLOps tool design principles</li>
+                                <li>Framework-agnostic ML lifecycle management</li>
+                                <li>Experiment tracking and reproducibility</li>
+                                <li>Model registry and versioning patterns</li>
+                                <li>Community adoption and contribution patterns</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Lifecycle Management</span>
+                            <span class="tag scale">Industry Standard</span>
+                            <span class="tag deployment">Multi-cloud</span>
+                            <span class="tag industry">Open Source</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Hugging Face: Democratizing NLP</div>
+                            <div class="case-complexity complexity-beginner">Beginner</div>
+                        </div>
+                        <div class="case-description">
+                            Hugging Face's transformation from a chatbot company to the leading platform for sharing and deploying NLP models and datasets.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Model hub architecture and community sharing</li>
+                                <li>Standardization of model interfaces</li>
+                                <li>Collaborative ML model development</li>
+                                <li>Easy deployment of pre-trained models</li>
+                                <li>Community-driven model evaluation</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">NLP</span>
+                            <span class="tag scale">Global Community</span>
+                            <span class="tag deployment">Model Hub</span>
+                            <span class="tag industry">Open Source</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category failure-lessons">
+                <div class="category-header">
+                    <div class="category-icon">⚠️</div>
+                    <div class="category-title">Learning from Failures</div>
+                </div>
+                <div class="category-description">
+                    Critical lessons from ML project failures, deployment issues, and operational challenges that provide valuable insights.
+                </div>
+                <div class="case-studies">
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">IBM Watson for Oncology Challenges</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            Analysis of IBM Watson for Oncology's challenges in clinical deployment, including data quality issues and workflow integration problems.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Challenges in medical AI deployment</li>
+                                <li>Importance of domain expertise in ML</li>
+                                <li>Data quality and bias in healthcare ML</li>
+                                <li>Clinical workflow integration challenges</li>
+                                <li>Managing expectations in AI projects</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Medical AI</span>
+                            <span class="tag scale">Clinical</span>
+                            <span class="tag deployment">Failed Integration</span>
+                            <span class="tag industry">Healthcare</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Microsoft Tay Chatbot Incident</div>
+                            <div class="case-complexity complexity-intermediate">Intermediate</div>
+                        </div>
+                        <div class="case-description">
+                            Microsoft's Tay chatbot incident demonstrating the importance of ML safety, monitoring, and adversarial input protection.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>ML safety and adversarial inputs</li>
+                                <li>Importance of real-time monitoring</li>
+                                <li>Online learning risks and mitigation</li>
+                                <li>Content moderation for ML systems</li>
+                                <li>Crisis response for ML failures</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">NLP Chatbot</span>
+                            <span class="tag scale">Public</span>
+                            <span class="tag deployment">Online Learning</span>
+                            <span class="tag industry">Social AI</span>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-header">
+                            <div class="case-title">Knight Capital Trading Algorithm</div>
+                            <div class="case-complexity complexity-advanced">Advanced</div>
+                        </div>
+                        <div class="case-description">
+                            The $440 million loss from Knight Capital's algorithmic trading system failure, highlighting the importance of ML system reliability and testing.
+                        </div>
+                        <div class="study-focus">
+                            <div class="focus-title">Study Focus:</div>
+                            <ul class="focus-points">
+                                <li>Importance of deployment processes</li>
+                                <li>Testing and validation in high-stakes ML</li>
+                                <li>Circuit breakers and safety mechanisms</li>
+                                <li>Monitoring and alerting for anomalies</li>
+                                <li>Recovery procedures for ML system failures</li>
+                            </ul>
+                        </div>
+                        <div class="case-tags">
+                            <span class="tag ml-type">Algorithmic Trading</span>
+                            <span class="tag scale">High Frequency</span>
+                            <span class="tag deployment">Real-time</span>
+                            <span class="tag industry">Finance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="learning-objectives">
+            <div class="objectives-title">Learning Objectives by Study Focus</div>
+            <div class="objectives-grid">
+                <div class="objective-card">
+                    <div class="objective-title">Infrastructure & Architecture</div>
+                    <div class="objective-description">
+                        Understand how to design and implement scalable ML infrastructure that grows with business needs.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: Platform design, scaling strategies, multi-cloud deployment, cost optimization
+                    </div>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-title">Production Deployment</div>
+                    <div class="objective-description">
+                        Learn deployment strategies, serving patterns, and operational practices for reliable ML systems.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: Blue-green deployment, A/B testing, canary releases, monitoring, alerting
+                    </div>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-title">Data & Feature Engineering</div>
+                    <div class="objective-description">
+                        Master data pipeline design, feature engineering, and serving infrastructure for ML systems.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: Feature stores, data validation, streaming pipelines, feature serving
+                    </div>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-title">Governance & Compliance</div>
+                    <div class="objective-description">
+                        Understand regulatory requirements, bias detection, and governance frameworks for ML systems.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: Model governance, bias detection, audit trails, regulatory compliance
+                    </div>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-title">Team Collaboration</div>
+                    <div class="objective-description">
+                        Learn how to build effective MLOps teams and processes that scale across organizations.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: Cross-functional collaboration, workflow design, tool selection, team processes
+                    </div>
+                </div>
+                
+                <div class="objective-card">
+                    <div class="objective-title">Business Impact</div>
+                    <div class="objective-description">
+                        Understand how to measure and maximize the business value of ML investments and initiatives.
+                    </div>
+                    <div class="objective-skills">
+                        Skills: ROI measurement, business metrics, stakeholder management, value demonstration
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="study-methodology">
+            <div class="methodology-title">Recommended Study Methodology</div>
+            <div class="methodology-steps">
+                <div class="method-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Choose Your Path</div>
+                    <div class="step-description">Select case studies based on your industry, role, and complexity level preferences</div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Research & Read</div>
+                    <div class="step-description">Study technical blogs, papers, and documentation from the companies and projects</div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Map to Concepts</div>
+                    <div class="step-description">Connect case study elements to the 10 fundamental MLOps concepts you've learned</div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Analyze Architecture</div>
+                    <div class="step-description">Break down the technical architecture, tools, and design decisions</div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Identify Patterns</div>
+                    <div class="step-description">Look for common patterns, anti-patterns, and best practices across cases</div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Apply Learnings</div>
+                    <div class="step-description">Consider how these approaches could apply to your own projects and challenges</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="resources">
+            <div class="resources-title">Additional Learning Resources</div>
+            <div class="resources-grid">
+                <div class="resource-category">
+                    <div class="resource-category-title">Technical Blogs</div>
+                    <ul class="resource-list">
+                        <li class="resource-item">Netflix Technology Blog</li>
+                        <li class="resource-item">Uber Engineering Blog</li>
+                        <li class="resource-item">Airbnb Engineering Blog</li>
+                        <li class="resource-item">Spotify Engineering Blog</li>
+                        <li class="resource-item">Facebook AI Blog</li>
+                        <li class="resource-item">Google AI Blog</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-category">
+                    <div class="resource-category-title">Academic Papers</div>
+                    <ul class="resource-list">
+                        <li class="resource-item">MLSys Conference Proceedings</li>
+                        <li class="resource-item">ICML System Papers</li>
+                        <li class="resource-item">KDD Industry Track</li>
+                        <li class="resource-item">VLDB Data Management</li>
+                        <li class="resource-item">SIGMOD Database Systems</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-category">
+                    <div class="resource-category-title">Conference Talks</div>
+                    <ul class="resource-list">
+                        <li class="resource-item">MLOps World Presentations</li>
+                        <li class="resource-item">Strata Data Conference</li>
+                        <li class="resource-item">RE•WORK AI Summit</li>
+                        <li class="resource-item">PyData Conference Talks</li>
+                        <li class="resource-item">KubeCon ML Track</li>
+                    </ul>
+                </div>
+                
+                <div class="resource-category">
+                    <div class="resource-category-title">Open Source Code</div>
+                    <ul class="resource-list">
+                        <li class="resource-item">Kubeflow GitHub Repository</li>
+                        <li class="resource-item">MLflow Source Code</li>
+                        <li class="resource-item">TensorFlow Extended (TFX)</li>
+                        <li class="resource-item">Apache Airflow Examples</li>
+                        <li class="resource-item">Feast Feature Store</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
